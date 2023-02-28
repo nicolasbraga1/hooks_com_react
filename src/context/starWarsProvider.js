@@ -7,6 +7,10 @@ function StarWarsProvider({ children }) {
   const [planets, setPlanets] = useState([]);
   const [filteredPlanets, setFilteredPlanets] = useState([]);
   const [filter, setFilter] = useState('');
+  const [numberFilter, setNumberFilter] = useState('0');
+  const [selection, setSelection] = useState('population');
+  const [compare, setCompare] = useState('maior que');
+  const [usedFilters, setUsedFilters] = useState([]);
 
   const planetsAPI = async () => {
     const fetchResults = await fetchPlanets();
@@ -24,11 +28,55 @@ function StarWarsProvider({ children }) {
     setFilteredPlanets(search);
   }, [filter, planets]);
 
+  const comparePlanets = (array) => {
+    switch (compare) {
+    case 'maior que':
+      setFilteredPlanets(
+        array.filter((p) => Number(p[selection]) > Number(numberFilter)),
+      );
+      if (!usedFilters.includes(compare)) {
+        setUsedFilters([...usedFilters, 'maior que']);
+      }
+      break;
+    case 'menor que':
+      setFilteredPlanets(
+        array.filter((p) => Number(p[selection]) < Number(numberFilter)),
+      );
+      if (!usedFilters.includes(compare)) {
+        setUsedFilters([...usedFilters, 'menor que']);
+      }
+      break;
+    case 'igual a':
+      setFilteredPlanets(
+        array.filter((p) => Number(p[selection]) === Number(numberFilter)),
+      );
+      if (!usedFilters.includes(compare)) {
+        setUsedFilters([...usedFilters, 'igual a']);
+      }
+      break;
+    default:
+      break;
+    }
+  };
+
+  const btnFunction = () => {
+    if (usedFilters.length === 0) {
+      comparePlanets(planets);
+    } else {
+      comparePlanets(filteredPlanets);
+    }
+  };
+
   const value = {
     planets,
     filteredPlanets,
-    filter,
     setFilter,
+    setNumberFilter,
+    setSelection,
+    setCompare,
+    comparePlanets,
+    usedFilters,
+    btnFunction,
   };
 
   return (
