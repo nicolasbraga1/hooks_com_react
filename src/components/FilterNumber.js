@@ -7,23 +7,29 @@ function FilterNumber() {
     setCompare,
     setNumberFilter,
     btnFunction,
-    usedFilters } = useContext(StarWarsContext);
+    usedFilters,
+    column } = useContext(StarWarsContext);
 
   return (
     <div>
       <select
         data-testid="column-filter"
-        onChange={ (e) => setSelection(e.target.value) }
+        onChangeCapture={ (e) => setSelection(e.target.value) }
+        onClickCapture={ (e) => setSelection(e.target.value) }
       >
-        <option value="population">population</option>
-        <option value="orbital_period">orbital_period</option>
-        <option value="diameter">diameter</option>
-        <option value="rotation_period">rotation_period</option>
-        <option value="surface_water">surface_water</option>
+        {column.map((filter) => (
+          <option
+            key={ filter }
+            value={ filter }
+          >
+            {filter}
+          </option>
+        ))}
       </select>
       <select
         data-testid="comparison-filter"
-        onChange={ (e) => setCompare(e.target.value) }
+        onChangeCapture={ (e) => setCompare(e.target.value) }
+        onClickCapture={ (e) => setCompare(e.target.value) }
       >
         <option value="maior que">maior que</option>
         <option value="menor que">menor que</option>
@@ -44,7 +50,11 @@ function FilterNumber() {
           Filtrar
         </button>
       </label>
-      <div>{usedFilters.map((f) => <span key={ f }>{f}</span>)}</div>
+      <div>
+        {usedFilters.map(
+          (f) => <span key={ f }>{f}</span>,
+        )}
+      </div>
     </div>
   );
 }

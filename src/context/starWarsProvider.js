@@ -11,6 +11,8 @@ function StarWarsProvider({ children }) {
   const [selection, setSelection] = useState('population');
   const [compare, setCompare] = useState('maior que');
   const [usedFilters, setUsedFilters] = useState([]);
+  const [column, setColumn] = useState([
+    'population', 'orbital_period', 'diameter', 'rotation_period', 'surface_water']);
 
   const planetsAPI = async () => {
     const fetchResults = await fetchPlanets();
@@ -34,24 +36,24 @@ function StarWarsProvider({ children }) {
       setFilteredPlanets(
         array.filter((p) => Number(p[selection]) > Number(numberFilter)),
       );
-      if (!usedFilters.includes(compare)) {
-        setUsedFilters([...usedFilters, 'maior que']);
+      if (!usedFilters.includes(selection)) {
+        setUsedFilters([...usedFilters, selection]);
       }
       break;
     case 'menor que':
       setFilteredPlanets(
         array.filter((p) => Number(p[selection]) < Number(numberFilter)),
       );
-      if (!usedFilters.includes(compare)) {
-        setUsedFilters([...usedFilters, 'menor que']);
+      if (!usedFilters.includes(selection)) {
+        setUsedFilters([...usedFilters, selection]);
       }
       break;
     case 'igual a':
       setFilteredPlanets(
         array.filter((p) => Number(p[selection]) === Number(numberFilter)),
       );
-      if (!usedFilters.includes(compare)) {
-        setUsedFilters([...usedFilters, 'igual a']);
+      if (!usedFilters.includes(selection)) {
+        setUsedFilters([...usedFilters, selection]);
       }
       break;
     default:
@@ -65,6 +67,7 @@ function StarWarsProvider({ children }) {
     } else {
       comparePlanets(filteredPlanets);
     }
+    setColumn(column.filter((c) => c !== selection));
   };
 
   const value = {
@@ -77,6 +80,8 @@ function StarWarsProvider({ children }) {
     comparePlanets,
     usedFilters,
     btnFunction,
+    compare,
+    column,
   };
 
   return (
