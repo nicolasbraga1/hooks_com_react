@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
 import StarWarsContext from '../context/starWarsContext';
+import PlanetInfo from './PlanetInfo';
 
 function Table() {
-  const { planets, filteredPlanets } = useContext(StarWarsContext);
-
-  const filterPlanets = filteredPlanets.length > 0 ? filteredPlanets : planets;
+  const {
+    planets } = useContext(StarWarsContext);
 
   return (
     <table>
@@ -25,13 +25,26 @@ function Table() {
           <th>URL</th>
         </tr>
       </thead>
-      { filterPlanets && filterPlanets.map((p) => (
-        <tbody key={ p.name }>
-          <tr>
-            { Object.values(p).map((e) => (<td key={ e }>{e}</td>))}
-          </tr>
-        </tbody>
-      ))}
+      <tbody>
+        {planets.map((p) => (
+          <PlanetInfo
+            key={ p.name }
+            name={ p.name }
+            rotationPeriod={ p.rotation_period }
+            orbitalPeriod={ p.orbital_period }
+            diameter={ p.diameter }
+            climate={ p.climate }
+            gravity={ p.gravity }
+            terrain={ p.terrain }
+            surfaceWater={ p.surface_water }
+            population={ p.population }
+            films={ p.films }
+            created={ p.created }
+            edited={ p.edited }
+            url={ p.url }
+          />
+        ))}
+      </tbody>
     </table>
   );
 }

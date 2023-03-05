@@ -6,83 +6,96 @@ import StarWarsContext from './starWarsContext';
 function StarWarsProvider({ children }) {
   const [planets, setPlanets] = useState([]);
   const [filteredPlanets, setFilteredPlanets] = useState([]);
-  const [filter, setFilter] = useState('');
-  const [numberFilter, setNumberFilter] = useState('0');
-  const [selection, setSelection] = useState('population');
-  const [compare, setCompare] = useState('maior que');
-  const [usedFilters, setUsedFilters] = useState([]);
-  const [column, setColumn] = useState([
-    'population', 'orbital_period', 'diameter', 'rotation_period', 'surface_water']);
+  const [numberFilter, setNumberFilter] = useState([]);
+  const [sorted, setSorted] = useState({ column: 'population', sort: 'ASC' });
 
   const planetsAPI = async () => {
     const fetchResults = await fetchPlanets();
     setPlanets(fetchResults);
   };
 
+  const filterPlanets = (planetName) => {
+    const search = planets.filter((p) => p.name.toLowerCase().includes(planetName));
+    setFilteredPlanets(search);
+  };
+
+  const comparePlanets = (column, comparison, value, index) => {
+    let array = [];
+    if (index === 0) {
+      array = planets;
+    } else {
+      array = filteredPlanets;
+    }
+    const planetsFiltered = array.filter((planet) => {
+      switch (comparison) {
+      case 'maior que':
+        return Number(planet[column]) > Number(value);
+      case 'menor que':
+        return Number(planet[column]) < Number(value);
+      case 'igual a':
+        return Number(planet[column]) === Number(value);
+      default:
+        return null;
+      }
+    });
+    setFilteredPlanets(planetsFiltered);
+  };
+
   useEffect(() => {
     planetsAPI();
-  }, []);
-
-  useEffect(() => {
-    const search = filter.length > 0
-      ? planets.filter((p) => p.name.toLowerCase().includes(filter))
-      : [];
-    setFilteredPlanets(search);
-  }, [filter, planets]);
-
-  const comparePlanets = (array) => {
-    switch (compare) {
-    case 'maior que':
-      setFilteredPlanets(
-        array.filter((p) => Number(p[selection]) > Number(numberFilter)),
-      );
-      if (!usedFilters.includes(selection)) {
-        setUsedFilters([...usedFilters, selection]);
-      }
-      break;
-    case 'menor que':
-      setFilteredPlanets(
-        array.filter((p) => Number(p[selection]) < Number(numberFilter)),
-      );
-      if (!usedFilters.includes(selection)) {
-        setUsedFilters([...usedFilters, selection]);
-      }
-      break;
-    case 'igual a':
-      setFilteredPlanets(
-        array.filter((p) => Number(p[selection]) === Number(numberFilter)),
-      );
-      if (!usedFilters.includes(selection)) {
-        setUsedFilters([...usedFilters, selection]);
-      }
-      break;
-    default:
-      break;
-    }
-  };
-
-  const btnFunction = () => {
-    if (usedFilters.length === 0) {
-      comparePlanets(planets);
+    if (numberFilter.length === 0) {
+      setFilteredPlanets('');
     } else {
-      comparePlanets(filteredPlanets);
+      numberFilter.forEach(
+        (e, index) => comparePlanets(
+          e.column,
+          e.comparison,
+          e.value,
+          index,
+        ),
+      );
     }
-    setColumn(column.filter((c) => c !== selection));
+  }, [numberFilter]);
+
+  const sortConfig = (array, colum, sort) => {
+    const planetsSorted = [];
+    if (sort === 'DESC') {
+      planetsSorted.push([...array.sort((x, y) => {
+        const firstPlanet = x[colum] === 'unknow' ? Infinity : Number(x[colum]);
+        const secondPlanet = y[colum] === 'unknow' ? Infinity : Number(y[colum]);
+        return secondPlanet - firstPlanet;
+      })]);
+    } else {
+      planetsSorted.push([...array.sort((x, y) => {
+        const firstPlanet = x[colum] === 'unknow' ? Infinity : Number(x[colum]);
+        const secondPlanet = y[colum] === 'unknow' ? Infinity : Number(y[colum]);
+        return firstPlanet - secondPlanet;
+      })]);
+    }
+    return [...planetsSorted[0]];
   };
 
-  const value = {
-    planets,
-    filteredPlanets,
-    setFilter,
-    setNumberFilter,
-    setSelection,
-    setCompare,
-    comparePlanets,
-    usedFilters,
-    btnFunction,
-    compare,
-    column,
+  const sortFunction = () => {
+    let sortingPlanets = [];
+    if (numberFilter.length === 0) {
+      sortingPlanets = sortConfig(planets, sorted.column, sorted.sort);
+    } else {
+      sortingPlanets = sortConfig(filteredPlanets, sorted.column, sorted.sort);
+    }
+    setFilteredPlanets(sortingPlanets);
   };
+
+  const value = (
+    {
+      planets: filteredPlanets || planets,
+      filterPlanets,
+      numberFilter,
+      setNumberFilter,
+      sorted,
+      setSorted,
+      sortFunction,
+    }
+  );
 
   return (
     <StarWarsContext.Provider value={ value }>{children}</StarWarsContext.Provider>

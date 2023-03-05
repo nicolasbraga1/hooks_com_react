@@ -2,13 +2,11 @@ import React from 'react';
 import './App.css';
 import StarWarsProvider from './context/starWarsProvider';
 import Table from './components/Table';
-import FilterName from './components/FilterName';
-import FilterNumber from './components/FilterNumber';
+import FilterNumber from './components/Filter';
 
 function App() {
   return (
     <StarWarsProvider>
-      <FilterName />
       <FilterNumber />
       <Table />
     </StarWarsProvider>
