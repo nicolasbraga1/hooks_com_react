@@ -30,13 +30,14 @@ function Sort() {
     <div>
       <select
         name="column"
+        id="column"
         data-testid="column-sort"
         onChange={ sortBtn }
         value={ sorted.column }
       >
-        { filterColumns.map((columnName) => (
-          <option key={ columnName } value={ columnName }>
-            { columnName }
+        { filterColumns.map((c) => (
+          <option key={ c } value={ c }>
+            { c }
           </option>
         )) }
       </select>

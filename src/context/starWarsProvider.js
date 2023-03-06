@@ -61,14 +61,14 @@ function StarWarsProvider({ children }) {
     const planetsSorted = [];
     if (sort === 'DESC') {
       planetsSorted.push([...array.sort((x, y) => {
-        const firstPlanet = x[colum] === 'unknow' ? Infinity : Number(x[colum]);
-        const secondPlanet = y[colum] === 'unknow' ? Infinity : Number(y[colum]);
+        const firstPlanet = x[colum] === 'unknown' ? -Infinity : Number(x[colum]);
+        const secondPlanet = y[colum] === 'unknown' ? -Infinity : Number(y[colum]);
         return secondPlanet - firstPlanet;
       })]);
     } else {
       planetsSorted.push([...array.sort((x, y) => {
-        const firstPlanet = x[colum] === 'unknow' ? Infinity : Number(x[colum]);
-        const secondPlanet = y[colum] === 'unknow' ? Infinity : Number(y[colum]);
+        const firstPlanet = x[colum] === 'unknown' ? Infinity : Number(x[colum]);
+        const secondPlanet = y[colum] === 'unknown' ? Infinity : Number(y[colum]);
         return firstPlanet - secondPlanet;
       })]);
     }
